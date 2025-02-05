@@ -4,6 +4,7 @@ package es.udc.redes.tutorial.info;
 import es.udc.redes.Utilities;
 
 import java.io.*;
+import java.util.Date;
 
 public class Info {
 
@@ -57,7 +58,8 @@ public class Info {
 
     @Override
     public String toString() {
-       return "INFORMACION:\n " + "NOMBRE: " + input.getName() + "\n" + "RUTA: " + input.getAbsolutePath() + "\n" + "TAMANO: " + input.length() + "\n" +
-               "ULTIMA MODIFICACION: " + input.lastModified() + "\n" + "EXTENSION: " + getExtension() + "\n" + "TIPO: " + getFileType() + "\n";
+        Date date = new Date(input.lastModified());
+       return "\nINFORMACION:\n" + "    NOMBRE: " + input.getName() + "\n" + "    RUTA: " + input.getAbsolutePath() + "\n" + "    TAMANO: " + input.length() + " bytes" + "\n" +
+               "    ULTIMA MODIFICACION: " + date + "\n" + "    EXTENSION: " + getExtension() + "\n" + "    TIPO: " + getFileType() + "\n";
     }
 }
