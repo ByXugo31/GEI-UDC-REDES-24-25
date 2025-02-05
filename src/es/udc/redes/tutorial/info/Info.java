@@ -4,7 +4,6 @@ package es.udc.redes.tutorial.info;
 import es.udc.redes.Utilities;
 
 import java.io.*;
-import java.util.Date;
 
 public class Info {
 
@@ -14,7 +13,6 @@ public class Info {
     private static final int NUM_ARGS = 1;
 
     private File input;
-    private String output;
 
     /////////////// CONSTRUCTOR ///////////////
 
@@ -36,9 +34,15 @@ public class Info {
     }
 
     private String getFileType() {
-        if (input.isDirectory()) return "DIRECTORY";
-        if (input.isFile()) return "FILE";
-        return "NONE";
+        if (input.isDirectory()) return "DIRECTORIO";
+        String extension = getExtension();
+        if (extension.equals(".txt")) return "TEXTO";
+        if (extension.equals(".jpg") || extension.equals(".png") || extension.equals(".gif") || extension.equals(".bmp") || extension.equals(".ico")) return "IMAGEN";
+        if (extension.equals(".mp3")) return "AUDIO";
+        if (extension.equals(".mp4") || extension.equals(".avi") || extension.equals(".mov")) return "VIDEO";
+        if (extension.equals(".zip") || extension.equals(".rar") || extension.equals(".tar") || extension.equals(".gz")) return "FICHERO COMPRIMIDO";
+        if (extension.equals(".bin") || extension.equals(".exe")) return "BINARIO";
+        return "EXTENSION DESCONOCIDA";
     }
 
 
@@ -47,14 +51,13 @@ public class Info {
     public static void main(String[] args) {
         try {
             Info info = new Info(args);
-            System.out.println(info.toString());
+            System.out.println(info);
         } catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
     }
 
     @Override
     public String toString() {
-       String output;
-       output = "FILE:\n " + "NAME: " + input.getName() + "\n" + "PATH: " + input.getAbsolutePath() + "\n" + "SIZE: " + input.length() + "\n" +
-               "LAST MODIFIED: " + input.lastModified() + "\n" + "EXTENSION: " + getExtension() + "\n" + "TYPE: " + + "\n";
+       return "INFORMACION:\n " + "NOMBRE: " + input.getName() + "\n" + "RUTA: " + input.getAbsolutePath() + "\n" + "TAMANO: " + input.length() + "\n" +
+               "ULTIMA MODIFICACION: " + input.lastModified() + "\n" + "EXTENSION: " + getExtension() + "\n" + "TIPO: " + getFileType() + "\n";
     }
 }
