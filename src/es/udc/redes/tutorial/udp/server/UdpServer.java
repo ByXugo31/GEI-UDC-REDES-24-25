@@ -14,6 +14,8 @@ public class UdpServer {
     private static final int NUM_ARGS = 1;
 
     private String puerto;
+    private int timeout = 300000;
+    private int tamBuffer = 1024;
 
     /////////////// CONSTRUCTOR & SETTERS ///////////////
 
@@ -34,27 +36,26 @@ public class UdpServer {
         catch (NumberFormatException e) {throw new IllegalArgumentException("EL PUERTO ESPECIFICADO NO ES VALIDO");}
     }
 
+
     public void start() {
-        // Create a server socket
+        System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
         try (DatagramSocket serverSocket = new DatagramSocket(parsePort())) {
-            // Set a timeout of 300 secs
-            serverSocket.setSoTimeout(300000);
+            serverSocket.setSoTimeout(timeout);
             while (true) {
-                // Prepare datagram for reception
-                byte array[] = new byte[1024];
+                byte array[] = new byte[tamBuffer];
                 DatagramPacket dgramReceived = new DatagramPacket(array, array.length);
-                // Receive the message
                 serverSocket.receive(dgramReceived);
-                System.out.println("SERVER: RECIBIDO " + new String(dgramReceived.getData()) + " DESDE " + dgramReceived.getAddress().toString() + ":" + dgramReceived.getPort());
-                // Prepare datagram to send response
+
+                String message = new String(dgramReceived.getData(), 0, dgramReceived.getLength());
+                System.out.println("\033[0;32m[+] RECIBIDO " + message + " DESDE " + dgramReceived.getAddress() + ":" + dgramReceived.getPort() + "\033[0m");
+
                 DatagramPacket dgramSent = new DatagramPacket(dgramReceived.getData(), dgramReceived.getLength(), dgramReceived.getAddress(), dgramReceived.getPort());
-                // Send response
                 serverSocket.send(dgramSent);
             }
         }
-        catch (SocketTimeoutException e) {System.err.println("NO SE HAN RECIBIDO PETICIONES EN 300S ");}
+        catch (SocketTimeoutException e) {System.err.println("[-] NO SE HAN RECIBIDO PETICIONES EN " + timeout + " ms");}
         catch (Exception e) {
-            System.err.println("ERROR: " + e.getMessage());
+            System.err.println("[-] ERROR: " + e.getMessage());
             e.printStackTrace();
         }
     }

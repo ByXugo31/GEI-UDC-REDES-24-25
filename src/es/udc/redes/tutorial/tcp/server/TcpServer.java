@@ -1,31 +1,68 @@
 package es.udc.redes.tutorial.tcp.server;
+import es.udc.redes.Utilities;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
 
 /** Multithread TCP echo server. */
 
 public class TcpServer {
 
-  public static void main(String argv[]) {
-    if (argv.length != 1) {
-      System.err.println("Format: es.udc.redes.tutorial.tcp.server.TcpServer <port>");
-      System.exit(-1);
-    }
+  /////////////// ATTRIBUTES ///////////////
+
+  private static final String ERROR_ARGS = "ERROR EN LOS PARAMETROS <NUMERO DE PUERTO>";
+  private static final int NUM_ARGS = 1;
+
+  private String puerto;
+  private int timeout = 300000;
+
+
+  /////////////// CONSTRUCTOR & SETTERS ///////////////
+
+  public TcpServer(String args[]) {
+    if (!Utilities.verifyArgs(args, NUM_ARGS) ) {
+      this.puerto = args[0];
+    } else throw new IllegalArgumentException(ERROR_ARGS);
+  }
+
+
+  //////////////// METHODS ///////////////
+
+  private int parsePort() {
     try {
-      // Create a server socket
-      // Set a timeout of 300 secs
-      while (true) {
-        // Wait for connections
-        // Create a ServerThread object, with the new connection as parameter
-        // Initiate thread using the start() method
-      }
-    // Uncomment next catch clause after implementing the logic
-    // } catch (SocketTimeoutException e) {
-    //  System.err.println("Nothing received in 300 secs");
-    } catch (Exception e) {
-      System.err.println("Error: " + e.getMessage());
-      e.printStackTrace();
-     } finally{
-	    //Close the socket
+      int port = Integer.parseInt(puerto);
+      return port;
     }
+    catch (NumberFormatException e) {throw new IllegalArgumentException("EL PUERTO ESPECIFICADO NO ES VALIDO");}
+  }
+
+  public void start() {
+    System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
+    try (ServerSocket serverSocket = new ServerSocket(parsePort())) {
+      serverSocket.setSoTimeout(timeout);
+      while (true) {
+        Socket socketCliente = serverSocket.accept();
+        ServerThread serverThread = new ServerThread(socketCliente);
+        serverThread.run();
+      }
+    }
+    catch (SocketTimeoutException e) {System.err.println("[-] NO SE HAN RECIBIDO PETICIONES EN " + timeout + " ms");}
+    catch (Exception e) {
+      System.err.println("[-] ERROR: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+
+  //////////////// MAIN ///////////////
+
+  public static void main(String argv[]) {
+    try {
+      TcpServer server = new TcpServer(argv);
+      server.start();
+    } catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
   }
 }

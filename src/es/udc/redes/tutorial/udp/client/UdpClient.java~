@@ -19,7 +19,7 @@ public class UdpClient {
             // (use any available port)
             sDatagram = new DatagramSocket();
             // Set timeout to 300 secs
-            sDatagram.setSoTimeout(300000);
+            sDatagram.setSoTimeout(10);
             // Obtain server IP address from first argument
             InetAddress serverAddress = InetAddress.getByName(argv[0]);
             // Obtain server port from second argument

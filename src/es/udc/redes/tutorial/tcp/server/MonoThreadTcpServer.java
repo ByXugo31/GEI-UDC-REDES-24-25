@@ -1,5 +1,8 @@
 package es.udc.redes.tutorial.tcp.server;
 
+import es.udc.redes.Utilities;
+import es.udc.redes.tutorial.udp.server.UdpServer;
+
 import java.net.*;
 import java.io.*;
 
@@ -8,37 +11,73 @@ import java.io.*;
  */
 public class MonoThreadTcpServer {
 
-    public static void main(String argv[]) {
-        if (argv.length != 1) {
-            System.err.println("Format: es.udc.redes.tutorial.tcp.server.MonoThreadTcpServer <port>");
-            System.exit(-1);
-        }
-        try {
-            // Create a server socket
-            
-            // Set a timeout of 300 secs
-            
-            while (true) {
-                // Wait for connections
-                
-                // Set the input channel
-                
-                // Set the output channel
-                
-                // Receive the client message
-                
-                // Send response to the client
+    /////////////// ATTRIBUTES ///////////////
 
-                // Close the streams
-            }
-        // Uncomment next catch clause after implementing the logic            
-        //} catch (SocketTimeoutException e) {
-        //    System.err.println("Nothing received in 300 secs ");
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-	        //Close the socket
+    private static final String ERROR_ARGS = "ERROR EN LOS PARAMETROS <NUMERO DE PUERTO>";
+    private static final int NUM_ARGS = 1;
+
+    private String puerto;
+    private int timeout = 300000;
+
+
+    /////////////// CONSTRUCTOR & SETTERS ///////////////
+
+    public MonoThreadTcpServer(String args[]) {
+        if (!Utilities.verifyArgs(args, NUM_ARGS) ) {
+            this.puerto = args[0];
+        } else throw new IllegalArgumentException(ERROR_ARGS);
+    }
+
+
+    //////////////// METHODS ///////////////
+
+    private int parsePort() {
+        try {
+            int port = Integer.parseInt(puerto);
+            return port;
         }
+        catch (NumberFormatException e) {throw new IllegalArgumentException("EL PUERTO ESPECIFICADO NO ES VALIDO");}
+    }
+
+    private void sendMessages(Socket socket, PrintWriter bufferSalida, BufferedReader bufferEntrada) throws IOException {
+        String message = bufferEntrada.readLine();
+        System.out.println("\033[0;32m[+] RECIBIDO " + message + " DESDE " + socket.getInetAddress() + ":" + socket.getPort() + "\033[0m");
+        bufferSalida.println(message);
+    }
+
+    private void close(Socket socket, PrintWriter writer, BufferedReader reader) throws IOException {
+        reader.close();
+        writer.close();
+        socket.close();
+    }
+
+    public void start() {
+        System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
+        try (ServerSocket serverSocket = new ServerSocket(parsePort())) {
+            serverSocket.setSoTimeout(timeout);
+            while (true) {
+                Socket socketCliente = serverSocket.accept();
+                BufferedReader bufferEntrada = new BufferedReader(new InputStreamReader(socketCliente.getInputStream()));
+                PrintWriter bufferSalida = new PrintWriter(socketCliente.getOutputStream(), true);
+                sendMessages(socketCliente, bufferSalida, bufferEntrada);
+
+                close(socketCliente, bufferSalida, bufferEntrada);
+            }
+        }
+        catch (SocketTimeoutException e) {System.err.println("[-] NO SE HAN RECIBIDO PETICIONES EN " + timeout + " ms");}
+        catch (Exception e) {
+            System.err.println("[-] ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    //////////////// MAIN ///////////////
+
+    public static void main(String argv[]) {
+        try {
+            MonoThreadTcpServer server = new MonoThreadTcpServer(argv);
+            server.start();
+        } catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
     }
 }
