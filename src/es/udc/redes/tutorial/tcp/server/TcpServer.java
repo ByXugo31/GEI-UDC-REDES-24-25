@@ -1,13 +1,6 @@
 package es.udc.redes.tutorial.tcp.server;
 import es.udc.redes.Utilities;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.*;
-
-/** Multithread TCP echo server. */
 
 public class TcpServer {
 
@@ -20,7 +13,7 @@ public class TcpServer {
   private int timeout = 300000;
 
 
-  /////////////// CONSTRUCTOR & SETTERS ///////////////
+  /////////////// CONSTRUCTOR ///////////////
 
   public TcpServer(String args[]) {
     if (!Utilities.verifyArgs(args, NUM_ARGS) ) {
@@ -46,7 +39,7 @@ public class TcpServer {
       while (true) {
         Socket socketCliente = serverSocket.accept();
         ServerThread serverThread = new ServerThread(socketCliente);
-        serverThread.run();
+        serverThread.start();
       }
     }
     catch (SocketTimeoutException e) {System.err.println("[-] NO SE HAN RECIBIDO PETICIONES EN " + timeout + " ms");}

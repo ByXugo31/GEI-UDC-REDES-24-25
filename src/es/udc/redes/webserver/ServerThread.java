@@ -1,5 +1,8 @@
 package es.udc.redes.webserver;
 
+import es.udc.redes.webserver.Peticiones.HTTPPetitions;
+import es.udc.redes.webserver.Peticiones.StatusCode;
+
 import java.net.*;
 import java.io.*;
 
@@ -7,24 +10,33 @@ import java.io.*;
 public class ServerThread extends Thread {
 
     private Socket socket;
+    private String[] request;
+    WebServer server;
 
-    public ServerThread(Socket s) {
+    public ServerThread(Socket s, WebServer server) {
         // Store the socket s
         this.socket = s;
+        this.server = server;
+    }
+
+    private void readRequest(BufferedReader in) throws IOException {
+        String message = in.readLine();
+        if (message == null) return;
+        System.out.println("\033[0;32m[+] RECIBIDO " + message + " DESDE " + socket.getInetAddress() + ":" + socket.getPort() + "\033[0m");
+        request = message.split(" ");
     }
 
     public void run() {
-        try {
-          // This code processes HTTP requests and generates 
-          // HTTP responses
-          // Uncomment next catch clause after implementing the logic
-          //
-        // } catch (SocketTimeoutException e) {
-        //    System.err.println("Nothing received in 300 secs");
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-        } finally {
-            // Close the client socket
+        String response;
+        try (BufferedReader bufferEntrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             OutputStream bufferSalida = socket.getOutputStream()) {
+            readRequest(bufferEntrada);
+            response = HTTPPetitions.executePetition(request, server.getServerName(),bufferSalida);
+            bufferSalida.write(response.getBytes());
+            bufferSalida.flush();
         }
+        catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
+        catch (IOException e) {System.err.println("[-] " + e.getMessage());} catch (Exception e) {System.err.println("[-] " + e.getMessage());}
     }
 }
+

@@ -23,22 +23,27 @@ public class Copy {
         } else throw new IllegalArgumentException(ERROR_ARGS);
     }
 
+    public void setInput(String input){this.input = input;}
+    public void setOutput(String output){this.output = output;}
+
 
     //////////////// METHODS ///////////////
 
-    public void doCopy(){
-        try (BufferedReader bufferRead = new BufferedReader(new FileReader(input));
-             BufferedWriter bufferWrite = new BufferedWriter(new FileWriter(output))){
 
-            int caracter = bufferRead.read();
-            while (caracter != -1) {
-                bufferWrite.write(caracter);
-                caracter = bufferRead.read();
+    public void doCopy(){
+        try (FileInputStream fileInput = new FileInputStream(input);
+             FileOutputStream fileOutput = new FileOutputStream(output)){
+
+            byte[] buffer = new byte[1024];
+            int nBytesLeidos = fileInput.read(buffer);
+            while (nBytesLeidos != -1) {
+                fileOutput.write(buffer, 0, nBytesLeidos);
+                nBytesLeidos = fileInput.read(buffer);
             }
-            System.out.println("El archivo se copió y procesó correctamente.");
+            System.out.println("El archivo se copio  y proces  correctamente.");
         }
-        catch (FileNotFoundException e) {throw new RuntimeException(e);}
-        catch (IOException e) {throw new RuntimeException(e);}
+        catch (FileNotFoundException e) {System.err.println(e.getMessage());}
+        catch (IOException e) {System.err.println(e.getMessage());}
     }
 
 

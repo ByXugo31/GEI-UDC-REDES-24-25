@@ -9,14 +9,11 @@ public class ServerThread extends Thread {
   /////////////// ATTRIBUTES ///////////////
 
   private Socket socket;
-  private int timeout = 10;
 
 
-  /////////////// CONSTRUCTOR & SETTERS ///////////////
+  /////////////// CONSTRUCTOR ///////////////
 
   public ServerThread(Socket s) {socket = s;}
-
-  public void setTimeout(int timeout) {this.timeout = timeout;}
 
 
   /////////////// METHODS ///////////////
