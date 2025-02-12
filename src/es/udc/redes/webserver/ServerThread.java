@@ -1,8 +1,6 @@
 package es.udc.redes.webserver;
 
 import es.udc.redes.webserver.Peticiones.HTTPPetitions;
-import es.udc.redes.webserver.Peticiones.StatusCode;
-
 import java.net.*;
 import java.io.*;
 
@@ -32,6 +30,7 @@ public class ServerThread extends Thread {
              OutputStream bufferSalida = socket.getOutputStream()) {
             readRequest(bufferEntrada);
             response = HTTPPetitions.executePetition(request, server.getServerName(),bufferSalida);
+            System.out.println(response);
             bufferSalida.write(response.getBytes());
             bufferSalida.flush();
         }

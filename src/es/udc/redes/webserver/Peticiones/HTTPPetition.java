@@ -1,8 +1,5 @@
 package es.udc.redes.webserver.Peticiones;
 
-import es.udc.redes.Utilities;
-import es.udc.redes.tutorial.info.Info;
-
 import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.util.Date;
@@ -12,13 +9,12 @@ public class HTTPPetition {
     /////////////// ATTRIBUTES ///////////////
 
     private File input;
-    private String header;
 
 
     /////////////// CONSTRUCTOR & SETTERS ///////////////
 
     public HTTPPetition(String arg) throws FileNotFoundException, AccessDeniedException {
-        this.input = new File(arg);
+        this.input = new File("p1-files" + File.separator + arg);
         if(!input.exists()) throw new FileNotFoundException(StatusCode.NotFound.toString());
         if (!input.canRead()) throw new AccessDeniedException(StatusCode.Forbidden.toString());
     }
@@ -59,6 +55,10 @@ public class HTTPPetition {
         }
         catch (FileNotFoundException e) {throw new FileNotFoundException(StatusCode.NotFound.toString());}
         catch (IOException e) {throw new IOException(StatusCode.InternalError.toString());}
+    }
+
+    public boolean isModified(String date){
+        return (input.lastModified() <= Long.parseLong(date));
     }
 
 }
