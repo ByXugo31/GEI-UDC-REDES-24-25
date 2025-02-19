@@ -12,6 +12,7 @@ public class WebServer {
     private String puerto;
     private int timeout = 300000;
     private String serverName;
+    private Log log;
 
     /////////////// CONSTRUCTOR & SETTERS & GETTERS///////////////
 
@@ -19,10 +20,12 @@ public class WebServer {
         if (!Utilities.verifyArgs(args, NUM_ARGS) ) {
             this.puerto = args[0];
             this.serverName = serverName;
+            log = new Log("p1-files/log.txt");
         } else throw new IllegalArgumentException(ERROR_ARGS);
     }
 
     public String getServerName() {return this.serverName;}
+    public Log getLog() {return this.log;}
 
     //////////////// METHODS ///////////////
 
