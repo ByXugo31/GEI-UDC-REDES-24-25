@@ -8,12 +8,9 @@ import java.io.IOException;
 public class Log {
     File log;
 
-    Log(String file) {
+    Log(String file) throws IOException {
         this.log = new File(file);
-        if (!log.exists()) {
-            try {log.createNewFile();}
-            catch (IOException e) {System.err.println("Error creando el fichero de log: " + e.getMessage());}
-        }
+        if (!log.exists()) log.createNewFile();
     }
 
     public void storeLog(String message) throws FileNotFoundException,IOException {

@@ -1,7 +1,8 @@
 package es.udc.redes.webserver;
 
 import es.udc.redes.Utilities;
-import es.udc.redes.webserver.Peticiones.HTTPPetitions;
+import es.udc.redes.webserver.Peticiones.ProcesarPeticion;
+
 import java.net.*;
 import java.io.*;
 
@@ -10,12 +11,18 @@ public class ServerThread extends Thread {
 
     private Socket socket;
     private String[] request;
-    WebServer server;
+    private String serverName;
+    private boolean allowDirectoryListing;
+    private Log log;
+    private ProcesarPeticion processer;
 
-    public ServerThread(Socket s, WebServer server) {
+    public ServerThread(Socket s, String serverName, boolean allowDirectoryListing, Log log, ProcesarPeticion processer) {
         // Store the socket s
         this.socket = s;
-        this.server = server;
+        this.serverName = serverName;
+        this.allowDirectoryListing = allowDirectoryListing;
+        this.log = log;
+        this.processer = processer;
     }
 
     private void readRequest(BufferedReader in) throws IOException {
@@ -26,7 +33,7 @@ public class ServerThread extends Thread {
     }
 
     private void storeLog(String response){
-        try {server.getLog().storeLog("CLIENT: " + socket.getInetAddress() + ":" + socket.getPort() + "\n\nREQUEST: \n" + Utilities.printArray(request) + "\n\n" + "RESPONSE: \n" + response + "\n");}
+        try {log.storeLog("CLIENT: " + socket.getInetAddress() + ":" + socket.getPort() + "\n\nREQUEST: \n" + Utilities.printArray(request) + "\n\n" + "RESPONSE: \n" + response + "\n");}
         catch (FileNotFoundException e) {System.err.println("[-] No se ha encontrado el fichero de log.");}
         catch (IOException e) {System.err.println("[-] Error inesperado al escribir en el fichero de log.");}
     }
@@ -36,11 +43,11 @@ public class ServerThread extends Thread {
         try (BufferedReader bufferEntrada = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             OutputStream bufferSalida = socket.getOutputStream();
             readRequest(bufferEntrada);
-            response = HTTPPetitions.executePetition(request, server.getServerName(),bufferSalida);
+            response = processer.obtainResponse(request,bufferSalida);
             storeLog(response);
         }
         catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
-        catch (IOException e) {System.err.println("[-] " + e.getMessage());} catch (Exception e) {System.err.println("[-] " + e.getMessage());}
+        catch (IOException e) {System.err.println("[-] " + e.getMessage());}
+        catch (Exception e) {System.err.println("[-] " + e.getMessage());}
     }
 }
-

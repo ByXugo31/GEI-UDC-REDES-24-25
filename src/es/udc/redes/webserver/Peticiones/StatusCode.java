@@ -5,8 +5,7 @@ public enum StatusCode {
     NotFound("HTTP/1.0 404 NOT FOUND\n"),
     OK("HTTP/1.0 200 OK\n"),
     Forbidden("HTTP/1.0 403 FORBIDDEN\n"),
-    NotModified("HTTP/1.0 304 NOT MODIFIED\n"),
-    InternalError("HTTP/1.0 500 INTERNAL SERVER ERROR\n");
+    NotModified("HTTP/1.0 304 NOT MODIFIED\n");
 
     private final String message;
 
