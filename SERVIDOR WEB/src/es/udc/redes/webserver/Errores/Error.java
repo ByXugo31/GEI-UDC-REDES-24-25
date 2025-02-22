@@ -2,7 +2,6 @@ package es.udc.redes.webserver.Errores;
 
 import es.udc.redes.webserver.Peticiones.Header;
 import es.udc.redes.webserver.Peticiones.StatusCode;
-
 import java.io.IOException;
 import java.io.OutputStream;
 

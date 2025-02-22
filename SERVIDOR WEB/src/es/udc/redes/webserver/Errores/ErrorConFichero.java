@@ -4,7 +4,6 @@ import es.udc.redes.webserver.Files.NormalFile;
 import es.udc.redes.webserver.Files.ProcessedFile;
 import es.udc.redes.webserver.Peticiones.Header;
 import es.udc.redes.webserver.Peticiones.StatusCode;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;

@@ -2,6 +2,7 @@ package es.udc.redes.webserver.Peticiones;
 
 import es.udc.redes.webserver.Errores.Error;
 import es.udc.redes.webserver.Errores.ErrorConFichero;
+import es.udc.redes.webserver.Errores.ErrorSoloCabecera;
 import es.udc.redes.webserver.Peticiones.Types.Peticion;
 import es.udc.redes.webserver.Peticiones.Types.Tipos;
 
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.NoSuchElementException;
 
 public class ProcesarPeticion {
 
@@ -32,6 +34,8 @@ public class ProcesarPeticion {
 
     private Error error404;
 
+    private Error error304;
+
 
 
     //////////////// CONSTRUCTOR //////////////
@@ -41,6 +45,7 @@ public class ProcesarPeticion {
         this.allowDirectoryListing = allowDirectoryListing;
         error400 = new ErrorConFichero(StatusCode.BadRequest, serverName, new File("p1-files/error400.html"));
         error404 = new ErrorConFichero(StatusCode.NotFound, serverName, new File("p1-files/error404.html"));
+        error304 = new ErrorSoloCabecera(StatusCode.NotModified, serverName);
     }
 
 
@@ -71,6 +76,7 @@ public class ProcesarPeticion {
         }
         catch (FileNotFoundException e) {return error404.sendError(out);}
         catch (IllegalArgumentException e) {return error400.sendError(out);}
+        catch (NoSuchElementException e) {return error304.sendError(out);}
 
     }
 
