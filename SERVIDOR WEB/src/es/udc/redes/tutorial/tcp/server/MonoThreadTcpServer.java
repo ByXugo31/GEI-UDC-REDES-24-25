@@ -51,9 +51,10 @@ public class MonoThreadTcpServer {
         socket.close();
     }
 
-    public void start() {
+    public void start() throws IOException {
         System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
-        try (ServerSocket serverSocket = new ServerSocket(parsePort())) {
+        ServerSocket serverSocket = new ServerSocket(parsePort());
+        try {
             serverSocket.setSoTimeout(timeout);
             while (true) {
                 Socket socketCliente = serverSocket.accept();
@@ -69,6 +70,7 @@ public class MonoThreadTcpServer {
             System.err.println("[-] ERROR: " + e.getMessage());
             e.printStackTrace();
         }
+        finally {serverSocket.close();}
     }
 
 
@@ -78,6 +80,6 @@ public class MonoThreadTcpServer {
         try {
             MonoThreadTcpServer server = new MonoThreadTcpServer(argv);
             server.start();
-        } catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
+        } catch (IllegalArgumentException | IOException e) {System.err.println(e.getMessage());}
     }
 }

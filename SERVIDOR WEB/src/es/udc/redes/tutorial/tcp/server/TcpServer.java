@@ -1,5 +1,7 @@
 package es.udc.redes.tutorial.tcp.server;
 import es.udc.redes.Utilities;
+
+import java.io.IOException;
 import java.net.*;
 
 public class TcpServer {
@@ -24,6 +26,11 @@ public class TcpServer {
 
   //////////////// METHODS ///////////////
 
+  private void closeSocket(ServerSocket socket) {
+    try {socket.close();}
+    catch (IOException e) {throw new RuntimeException(e);}
+  }
+
   private int parsePort() {
     try {
       int port = Integer.parseInt(puerto);
@@ -34,7 +41,9 @@ public class TcpServer {
 
   public void start() {
     System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
-    try (ServerSocket serverSocket = new ServerSocket(parsePort())) {
+    ServerSocket serverSocket = null;
+    try {
+      serverSocket = new ServerSocket(parsePort());
       serverSocket.setSoTimeout(timeout);
       while (true) {
         Socket socketCliente = serverSocket.accept();
@@ -47,6 +56,7 @@ public class TcpServer {
       System.err.println("[-] ERROR: " + e.getMessage());
       e.printStackTrace();
     }
+    finally {closeSocket(serverSocket);}
   }
 
 

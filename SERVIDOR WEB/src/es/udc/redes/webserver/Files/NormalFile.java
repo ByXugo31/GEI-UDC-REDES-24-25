@@ -61,11 +61,9 @@ public class NormalFile extends ProcessedFile {
 
     @Override
     protected void readContent() throws IOException {
-        try (FileReader reader = new FileReader(getInput())) {
-            StringBuilder contentBuilder = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) contentBuilder.append((char) c);
-            setContentLines(contentBuilder.toString());
+        try (FileInputStream reader = new FileInputStream(getInput())) {
+            byte[] bytes = reader.readAllBytes();
+            setContentLines(bytes);
         }
     }
 }

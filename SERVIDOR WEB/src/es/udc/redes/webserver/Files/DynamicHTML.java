@@ -38,6 +38,6 @@ public class DynamicHTML extends ProcessedFile {
 
         html.append("</ul>\n</body>\n</html>");
         setLength(html.length());
-        setContentLines(html.toString());
+        setContentLines(html.toString().getBytes());
     }
 }

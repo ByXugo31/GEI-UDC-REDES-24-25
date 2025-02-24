@@ -54,6 +54,7 @@ public class ProcesarPeticion {
 
     public String obtainResponse(String[] args, OutputStream out) throws IOException {
         String response;
+        if(args == null) return "";
         if (args.length == 0 || args.length == 4 || args.length == 2  || args.length > 5) return error400.sendError(out);
         this.nombre = args[0];
         this.file = new File("p1-files" + File.separator + args[1]);

@@ -11,18 +11,19 @@ public class ServerThread extends Thread {
 
     private Socket socket;
     private String[] request;
-    private String serverName;
-    private boolean allowDirectoryListing;
     private Log log;
     private ProcesarPeticion processer;
 
-    public ServerThread(Socket s, String serverName, boolean allowDirectoryListing, Log log, ProcesarPeticion processer) {
+    public ServerThread(Socket s, Log log, ProcesarPeticion processer) {
         // Store the socket s
         this.socket = s;
-        this.serverName = serverName;
-        this.allowDirectoryListing = allowDirectoryListing;
         this.log = log;
         this.processer = processer;
+    }
+
+    private void closeSocket() {
+        try {socket.close();}
+        catch (IOException e) {throw new RuntimeException(e);}
     }
 
     private void readRequest(BufferedReader in) throws IOException {
@@ -49,5 +50,6 @@ public class ServerThread extends Thread {
         catch (IllegalArgumentException e) {System.err.println(e.getMessage());}
         catch (IOException e) {System.err.println("[-] " + e.getMessage());}
         catch (Exception e) {System.err.println("[-] " + e.getMessage());}
+        finally {closeSocket();}
     }
 }

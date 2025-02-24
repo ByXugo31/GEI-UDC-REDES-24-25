@@ -20,7 +20,7 @@ public abstract class ProcessedFile {
 
     private long length;
 
-    private String contentLines;
+    private byte[] contentLines;
 
 
 
@@ -50,7 +50,7 @@ public abstract class ProcessedFile {
 
     protected void setLength(long length) {this.length = length;}
 
-    protected void setContentLines(String contentLines) {this.contentLines = contentLines;}
+    protected void setContentLines(byte[] contentLines) {this.contentLines = contentLines;}
 
 
 
@@ -73,7 +73,7 @@ public abstract class ProcessedFile {
     }
 
     public void sendFile(OutputStream out) throws IOException {
-        out.write(contentLines.getBytes());
+        out.write(contentLines);
         out.flush();
     }
 

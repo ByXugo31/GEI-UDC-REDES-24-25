@@ -48,13 +48,15 @@ public class WebServer {
         catch (NumberFormatException e) {throw new IllegalArgumentException("[-] EL PUERTO ESPECIFICADO NO ES VALIDO");}
     }
 
-    public void start() {
+    public void start() throws IOException {
         System.out.println("SERVER: INICIADO EN EL PUERTO " + parsePort());
-        try (ServerSocket serverSocket = new ServerSocket(parsePort())) {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(parsePort());
             serverSocket.setSoTimeout(timeout);
             while (true) {
                 Socket socketCliente = serverSocket.accept();
-                ServerThread serverThread = new ServerThread(socketCliente,serverName, allowDirectoryListing, log, processer);
+                ServerThread serverThread = new ServerThread(socketCliente, log, processer);
                 serverThread.start();
             }
         }
@@ -63,6 +65,7 @@ public class WebServer {
             System.err.println("[-] ERROR: " + e.getMessage());
             e.printStackTrace();
         }
+        finally {serverSocket.close();}
     }
 
 
@@ -77,8 +80,7 @@ public class WebServer {
         try {
             WebServer server = new WebServer(argv, "TESTSERVER");
             server.start();
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
         }
+        catch (IllegalArgumentException | IOException e) {System.err.println(e.getMessage());}
     }
 }
